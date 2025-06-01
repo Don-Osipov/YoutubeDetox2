@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Digital Detox Enforcer</title>
+  <style>
+    body {
+      width: 400px;
+      padding: 15px;
+      font-family: Arial, sans-serif;
+    }
+    .stats {
+      margin-bottom: 15px;
+    }
+    button {
+      padding: 8px 12px;
+      background-color: #4285f4;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    button:hover {
+      background-color: #3367d6;
+    }
+    .site-stat {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 5px;
+    }
+    .toggle-section {
+      margin-top: 20px;
+      border-top: 1px solid #eee;
+      padding-top: 15px;
+    }
+   
+    .toggle-option {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .toggle-option-text {
+      flex: 1;
+    }
+
+    .option-description {
+      font-size: 12px;
+      color: #666;
+    }
+
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 24px;
+      margin-left: 10px;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+      border-radius: 24px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: #4285f4;
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(26px);
+    }
+    
+    /* Visual Degradation Subsection */
+    .degradation-options {
+      margin-left: 20px;
+      margin-top: 10px;
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      border-left: 3px solid #4285f4;
+      display: none;
+    }
+    
+    .degradation-options h4 {
+      margin: 0 0 15px 0;
+      font-size: 14px;
+      color: #333;
+      font-weight: 600;
+    }
+    
+    .sub-option {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      padding: 8px;
+      background: white;
+      border-radius: 4px;
+      border: 1px solid #e8eaed;
+    }
+    
+    .sub-option-text {
+      flex: 1;
+      font-size: 13px;
+    }
+    
+    .sub-option-description {
+      font-size: 11px;
+      color: #666;
+      margin-top: 2px;
+    }
+    
+    .small-toggle {
+      width: 40px;
+      height: 20px;
+    }
+    
+    .small-toggle .slider:before {
+      height: 12px;
+      width: 12px;
+      left: 4px;
+      bottom: 4px;
+    }
+    
+    .small-toggle input:checked + .slider:before {
+      transform: translateX(20px);
+    }
+    
+    /* Timing Controls */
+    .timing-section {
+      margin-top: 15px;
+      padding: 15px;
+      background: #f0f4ff;
+      border-radius: 8px;
+      border-left: 3px solid #1976d2;
+    }
+    
+    .timing-section h4 {
+      margin: 0 0 15px 0;
+      font-size: 14px;
+      color: #333;
+      font-weight: 600;
+    }
+    
+    .timing-option {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    
+    .timing-input-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .timing-input {
+      width: 60px;
+      padding: 6px 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 13px;
+      text-align: center;
+    }
+    
+    .timing-unit {
+      font-size: 12px;
+      color: #666;
+      min-width: 30px;
+    }
+    
+    .timing-description {
+      font-size: 11px;
+      color: #666;
+      margin-top: 4px;
+      font-style: italic;
+    }
+    
+    /* Intensity Controls */
+    .intensity-section {
+      margin-top: 15px;
+      padding: 15px;
+      background: #fff3e0;
+      border-radius: 8px;
+      border-left: 3px solid #ff9800;
+    }
+    
+    .intensity-section h4 {
+      margin: 0 0 15px 0;
+      font-size: 14px;
+      color: #333;
+      font-weight: 600;
+    }
+    
+    .intensity-option {
+      margin-bottom: 15px;
+    }
+    
+    .intensity-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 8px;
+      color: #333;
+    }
+    
+    .intensity-slider {
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: #ddd;
+      outline: none;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+    
+    .intensity-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #ff9800;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    .intensity-slider::-moz-range-thumb {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #ff9800;
+      cursor: pointer;
+      border: none;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    .intensity-value {
+      font-size: 12px;
+      color: #666;
+      text-align: center;
+      margin-top: 5px;
+    }
+    
+    .preset-buttons {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    
+    .preset-btn {
+      flex: 1;
+      padding: 6px 8px;
+      font-size: 11px;
+      background: #e8eaed;
+      color: #333;
+      border: 1px solid #dadce0;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 0;
+    }
+    
+    .preset-btn:hover {
+      background: #dadce0;
+    }
+    
+    .preset-btn.active {
+      background: #4285f4;
+      color: white;
+      border-color: #4285f4;
+    }
+    
+    /* Todo section styles */
+    #todo-section {
+      margin-top: 15px;
+      padding: 15px;
+      background: #f5f5f5;
+      border-radius: 8px;
+      display: none;
+    }
+    
+    #todo-section h4 {
+      margin: 0 0 10px 0;
+      font-size: 14px;
+      color: #333;
+    }
+    
+    .todo-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px;
+      margin-bottom: 5px;
+      background: white;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+    
+    .todo-item span {
+      flex: 1;
+      margin-right: 10px;
+    }
+    
+    .delete-todo {
+      background: #f44336;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      padding: 4px 8px;
+      cursor: pointer;
+      font-size: 11px;
+    }
+    
+    .delete-todo:hover {
+      background: #d32f2f;
+    }
+    
+    .add-todo-container {
+      display: flex;
+      gap: 5px;
+      margin-top: 10px;
+    }
+    
+    #new-todo-input {
+      flex: 1;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+    
+    #add-todo-btn {
+      padding: 8px 12px;
+      margin-top: 0;
+      font-size: 13px;
+    }
+    
+    /* Collapsible sections */
+    .collapsible-header {
+      cursor: pointer;
+      user-select: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .collapsible-arrow {
+      width: 0;
+      height: 0;
+      border-left: 6px solid #666;
+      border-top: 4px solid transparent;
+      border-bottom: 4px solid transparent;
+      transition: transform 0.3s ease;
+    }
+    
+    .collapsible-arrow.expanded {
+      transform: rotate(90deg);
+    }
+  </style>
+</head>
+<body>
+  <h2>Digital Detox Enforcer</h2>
+  
+  <div class="stats" id="stats-container">
+    <h3>Today's Usage</h3>
+    <div id="site-stats">
+      Loading stats...
+    </div>
+  </div>
+  
+  <div class="toggle-section">
+    <h3>Detox Features</h3>
+    
+    <div class="toggle-option">
+      <div class="toggle-option-text">
+        <div class="collapsible-header" id="degradation-header">
+          <div class="collapsible-arrow" id="degradation-arrow"></div>
+          <label for="visual-degradation">Visual Degradation</label>
+        </div>
+        <div class="option-description">Progressively reduce visual appeal to discourage prolonged use</div>
+      </div>
+      <label class="toggle-switch">
+        <input type="checkbox" id="visual-degradation" checked>
+        <span class="slider"></span>
+      </label>
+    </div>
+    
+    <div class="degradation-options" id="degradation-options">
+      <h4>Visual Effects</h4>
+      
+      <div class="sub-option">
+        <div class="sub-option-text">
+          <div>Desaturation</div>
+          <div class="sub-option-description">Gradually remove color saturation</div>
+        </div>
+        <label class="toggle-switch small-toggle">
+          <input type="checkbox" id="enable-desaturation" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+      
+      <div class="sub-option">
+        <div class="sub-option-text">
+          <div>Blur Effect</div>
+          <div class="sub-option-description">Add progressive blur to content</div>
+        </div>
+        <label class="toggle-switch small-toggle">
+          <input type="checkbox" id="enable-blur" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+      
+      <div class="sub-option">
+        <div class="sub-option-text">
+          <div>Opacity Reduction</div>
+          <div class="sub-option-description">Fade out the page content</div>
+        </div>
+        <label class="toggle-switch small-toggle">
+          <input type="checkbox" id="enable-opacity" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+      
+      <div class="sub-option">
+        <div class="sub-option-text">
+          <div>Loading Delays</div>
+          <div class="sub-option-description">Add artificial delays to interactions</div>
+        </div>
+        <label class="toggle-switch small-toggle">
+          <input type="checkbox" id="enable-delays" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+      
+      <div class="timing-section">
+        <h4>Timing Controls</h4>
+        
+        <div class="timing-option">
+          <div>
+            <div style="font-weight: 500;">Level Progression</div>
+            <div class="timing-description">Time between degradation levels</div>
+          </div>
+          <div class="timing-input-group">
+            <input type="number" id="level-interval" class="timing-input" value="5" min="1" max="60">
+            <span class="timing-unit">min</span>
+          </div>
+        </div>
+        
+        <div class="timing-option">
+          <div>
+            <div style="font-weight: 500;">Total Levels</div>
+            <div class="timing-description">Maximum degradation stages</div>
+          </div>
+          <div class="timing-input-group">
+            <input type="number" id="max-levels" class="timing-input" value="5" min="3" max="10">
+            <span class="timing-unit">stages</span>
+          </div>
+        </div>
+        
+        <div class="preset-buttons">
+          <button class="preset-btn" data-preset="gentle">Gentle</button>
+          <button class="preset-btn active" data-preset="standard">Standard</button>
+          <button class="preset-btn" data-preset="aggressive">Aggressive</button>
+        </div>
+      </div>
+      
+      <div class="intensity-section">
+        <h4>Effect Intensity</h4>
+        
+        <div class="intensity-option">
+          <label class="intensity-label" for="blur-intensity">Blur Intensity</label>
+          <input type="range" id="blur-intensity" class="intensity-slider" min="0" max="100" value="50">
+          <div class="intensity-value" id="blur-value">Medium (50%)</div>
+        </div>
+        
+        <div class="intensity-option">
+          <label class="intensity-label" for="desaturation-intensity">Desaturation Intensity</label>
+          <input type="range" id="desaturation-intensity" class="intensity-slider" min="0" max="100" value="75">
+          <div class="intensity-value" id="desaturation-value">High (75%)</div>
+        </div>
+        
+        <div class="intensity-option">
+          <label class="intensity-label" for="opacity-intensity">Opacity Reduction</label>
+          <input type="range" id="opacity-intensity" class="intensity-slider" min="0" max="100" value="60">
+          <div class="intensity-value" id="opacity-value">Medium-High (60%)</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="toggle-option">
+      <div class="toggle-option-text">
+        <label for="color-temperature">Color Temperature</label>
+        <div class="option-description">Gradually shift to warmer colors (like f.lux)</div>
+      </div>
+      <label class="toggle-switch">
+        <input type="checkbox" id="color-temperature">
+        <span class="slider"></span>
+      </label>
+    </div>
+    
+    <div class="toggle-option">
+      <div class="toggle-option-text">
+        <label for="speed-adjust">Speed Adjustment</label>
+        <div class="option-description">Gradually slow down video playback</div>
+      </div>
+      <label class="toggle-switch">
+        <input type="checkbox" id="speed-adjust">
+        <span class="slider"></span>
+      </label>
+    </div>
+    
+    <div class="toggle-option">
+      <div class="toggle-option-text">
+        <label for="todo-integration">Todo/Calendar Integration</label>
+        <div class="option-description">Show your tasks after extended viewing</div>
+      </div>
+      <label class="toggle-switch">
+        <input type="checkbox" id="todo-integration">
+        <span class="slider"></span>
+      </label>
+    </div>
+    
+    <div class="toggle-option">
+      <div class="toggle-option-text">
+        <label for="video-counter">Video Counter</label>
+        <div class="option-description">Track and display number of videos watched</div>
+      </div>
+      <label class="toggle-switch">
+        <input type="checkbox" id="video-counter">
+        <span class="slider"></span>
+      </label>
+    </div>
+  </div>
+  
+  <div id="todo-section">
+    <h4>Customize Todo Items</h4>
+    <div id="todo-list"></div>
+    <div class="add-todo-container">
+      <input type="text" id="new-todo-input" placeholder="Add new todo item...">
+      <button id="add-todo-btn">Add</button>
+    </div>
+  </div>
+  
+  <div style="display: flex; gap: 10px; margin-top: 15px;">
+    <button id="save-options" style="flex: 1; min-width: 150px;">Save Settings</button>
+    <button id="reset-stats" style="flex: 1; min-width: 150px;">Reset Statistics</button>
+  </div>
+  
+  <script>
+    function toggleDegradationOptions() {
+      const options = document.getElementById('degradation-options');
+      const arrow = document.getElementById('degradation-arrow');
+      const isVisible = options.style.display === 'block';
+      
+      if (isVisible) {
+        options.style.display = 'none';
+        arrow.classList.remove('expanded');
+      } else {
+        options.style.display = 'block';
+        arrow.classList.add('expanded');
+      }
+    }
+    
+    function setTimingPreset(preset) {
+      const levelInterval = document.getElementById('level-interval');
+      const maxLevels = document.getElementById('max-levels');
+      const buttons = document.querySelectorAll('.preset-btn');
+      
+      buttons.forEach(btn => btn.classList.remove('active'));
+      
+      switch(preset) {
+        case 'gentle':
+          levelInterval.value = 10;
+          maxLevels.value = 4;
+          document.querySelector('.preset-btn[data-preset="gentle"]').classList.add('active');
+          break;
+        case 'standard':
+          levelInterval.value = 5;
+          maxLevels.value = 5;
+          document.querySelector('.preset-btn[data-preset="standard"]').classList.add('active');
+          break;
+        case 'aggressive':
+          levelInterval.value = 3;
+          maxLevels.value = 7;
+          document.querySelector('.preset-btn[data-preset="aggressive"]').classList.add('active');
+          break;
+      }
+    }
+    
+    function updateIntensityValues() {
+      const blurSlider = document.getElementById('blur-intensity');
+      const desaturationSlider = document.getElementById('desaturation-intensity');
+      const opacitySlider = document.getElementById('opacity-intensity');
+      
+      const blurValue = document.getElementById('blur-value');
+      const desaturationValue = document.getElementById('desaturation-value');
+      const opacityValue = document.getElementById('opacity-value');
+      
+      function getIntensityLabel(value) {
+        if (value <= 20) return 'Very Low';
+        if (value <= 40) return 'Low';
+        if (value <= 60) return 'Medium';
+        if (value <= 80) return 'High';
+        return 'Very High';
+      }
+      
+      blurSlider.addEventListener('input', function() {
+        blurValue.textContent = `${getIntensityLabel(this.value)} (${this.value}%)`;
+      });
+      
+      desaturationSlider.addEventListener('input', function() {
+        desaturationValue.textContent = `${getIntensityLabel(this.value)} (${this.value}%)`;
+      });
+      
+      opacitySlider.addEventListener('input', function() {
+        opacityValue.textContent = `${getIntensityLabel(this.value)} (${this.value}%)`;
+      });
+    }
+    
+    document.addEventListener('DOMContentLoaded', function() {
+      updateIntensityValues();
+      
+      const degradationHeader = document.getElementById('degradation-header');
+      if (degradationHeader) {
+        degradationHeader.addEventListener('click', toggleDegradationOptions);
+      }
+      
+      const visualDegradationToggle = document.getElementById('visual-degradation');
+      if (visualDegradationToggle) {
+        visualDegradationToggle.addEventListener('change', function() {
+          const options = document.getElementById('degradation-options');
+          if (this.checked && options.style.display !== 'block') {
+            toggleDegradationOptions();
+          } else if (!this.checked && options.style.display === 'block') {
+            toggleDegradationOptions();
+          }
+        });
+      }
+    });
+    });
+  </script>
+  
+  <script src="popup.js"></script>
+</body>
+</html>

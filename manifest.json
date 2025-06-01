@@ -1,0 +1,24 @@
+{
+  "name": "Digital Detox Enforcer",
+  "version": "1.0",
+  "description": "Progressively degrades social media experience to discourage addiction",
+  "manifest_version": 3,
+  "permissions": [
+    "storage",
+    "tabs",
+    "webNavigation",
+    "scripting"
+  ],
+  "host_permissions": [
+    "*://*.youtube.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "128": "images/icon.png"
+    }
+  }
+}
